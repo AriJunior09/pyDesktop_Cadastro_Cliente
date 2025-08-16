@@ -95,7 +95,7 @@ class Application():
 
     def lista_frame2(self):
         self.listaClientes = ttk.Treeview(self.frame_2, height=3, columns=("col1", "col2", "col3", "col4"))
-        self.listaClientes.heading("#0", text="ID")
+        self.listaClientes.heading("#0", text="")
         self.listaClientes.heading("col1", text="Código")
         self.listaClientes.heading("col2", text="Nome")
         self.listaClientes.heading("col3", text="Telefone")
@@ -107,8 +107,10 @@ class Application():
         self.listaClientes.column("col3", width=100, anchor="center")
         self.listaClientes.column("col4", width=150, anchor="center")
 
-        self.listaClientes.place(relx=0.01, rely=0.01, relwidth=0.95, relheight=0.85)   
+        self.listaClientes.place(relx=0.01, rely=0.01, relwidth=0.95, relheight=0.90)   
         
-
+        self.scrooLista = Scrollbar(self.frame_2, orient="vertical")
+        self.listaClientes.configure(yscrollcommand=self.scrooLista.set)
+        self.scrooLista.place(relx=0.96, rely=0.01, relwidth=0.04, relheight=0.90)
 
 Application()
