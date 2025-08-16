@@ -14,6 +14,33 @@ class Funcs():
         self.en_numero.delete(0, END)
         self.en_bairro.delete(0, END)
         self.en_cidade.delete(0, END)        
+    def conecta_db(self):
+        self.conn = sqlite3.connect("clientes.db")
+        self.cursor = self.conn.cursor()
+
+    def desconecta_db(self):
+        self.conn.close()
+    
+    def montaTabelas(self):
+        self.conecta_db(); print("Conectado ao banco de dados")
+
+        ### Criando a tabela clientes
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS clientes (
+                codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome CHAR(40) NOT NULL,
+                telefone INTEGER(20) NOT NULL,
+                cep INTEGER(40),
+                endereco CHAR(80),
+                numero INTEGER(20),
+                bairro CHAR(40),
+                cidade CHAR(40)
+            )
+        """)
+        self.conn.commit()
+        print("Banco de dados criado com sucesso")
+        self.desconecta_db()
+
 
 class Application(Funcs):
     def __init__(self):
