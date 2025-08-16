@@ -3,7 +3,18 @@ from tkinter import ttk
 
 root = Tk()
 
-class Application():
+class Funcs():
+    def limpa_tela(self):
+        self.en_codigo.delete(0, END)
+        self.en_nome.delete(0, END)
+        self.en_telefone.delete(0, END)
+        self.en_cep.delete(0, END)
+        self.en_endereco.delete(0, END)
+        self.en_numero.delete(0, END)
+        self.en_bairro.delete(0, END)
+        self.en_cidade.delete(0, END)        
+
+class Application(Funcs):
     def __init__(self):
         self.root = root
         self.tela()
@@ -38,7 +49,7 @@ class Application():
     ).place(relx=relx, rely=rely, relwidth=0.14, relheight=0.14)
 
     def widgets_frame1(self):
-        self.criar_botao(self.frame_1, "Limpar", 0.19, 0.10)
+        self.criar_botao(self.frame_1, "Limpar", 0.19, 0.10, comando=self.limpa_tela)
         self.criar_botao(self.frame_1, "Buscar", 0.35, 0.10)
         self.criar_botao(self.frame_1, "Novo", 0.51, 0.10)
         self.criar_botao(self.frame_1, "Alterar", 0.67, 0.10)
@@ -66,26 +77,26 @@ class Application():
         ## Criando Labels e Entrada do CEP
         self.lb_cep = Label(self.frame_1, text="CEP", font=("Arial", 11, "bold"),fg="#1D6E6E", bg="#e6e6e6")
         self.lb_cep.place(relx=0.82, rely=0.35)
-        self.lb_cep = Entry(self.frame_1, font=("bold", 10))
-        self.lb_cep.place(relx=0.82, rely=0.45, relwidth=0.12, relheight=0.11)
+        self.en_cep = Entry(self.frame_1, font=("bold", 10))
+        self.en_cep.place(relx=0.82, rely=0.45, relwidth=0.12, relheight=0.11)
 
         ## Criando Labels e Entrada do endereço
         self.lb_endereco = Label(self.frame_1, text="Endereço", font=("Arial", 11, "bold"),fg="#1D6E6E", bg="#e6e6e6")
         self.lb_endereco.place(relx=0.02, rely=0.6)
-        self.lb_endereco = Entry(self.frame_1, font=("bold", 10))
-        self.lb_endereco.place(relx=0.02, rely=0.7, relwidth=0.32, relheight=0.11)
+        self.en_endereco = Entry(self.frame_1, font=("bold", 10))
+        self.en_endereco.place(relx=0.02, rely=0.7, relwidth=0.32, relheight=0.11)
 
         ## Criando Labels e Entrada do número
         self.lb_numero = Label(self.frame_1, text="Número", font=("Arial", 11, "bold"),fg="#1D6E6E", bg="#e6e6e6")
         self.lb_numero.place(relx=0.36, rely=0.6)
-        self.lb_numero = Entry(self.frame_1, font=("bold", 10))
-        self.lb_numero.place(relx=0.36, rely=0.7, relwidth=0.08, relheight=0.11)
+        self.en_numero = Entry(self.frame_1, font=("bold", 10))
+        self.en_numero.place(relx=0.36, rely=0.7, relwidth=0.08, relheight=0.11)
 
         ## Criando Labels e Entrada da Bairro   
         self.lb_bairro = Label(self.frame_1, text="Bairro", font=("Arial", 11, "bold"),fg="#1D6E6E", bg="#e6e6e6")
         self.lb_bairro.place(relx=0.46, rely=0.6)
-        self.lb_bairro = Entry(self.frame_1, font=("bold", 10))
-        self.lb_bairro.place(relx=0.46, rely=0.7, relwidth=0.22, relheight=0.11)
+        self.en_bairro = Entry(self.frame_1, font=("bold", 10))
+        self.en_bairro.place(relx=0.46, rely=0.7, relwidth=0.22, relheight=0.11)
 
         ## Criando Labels e Entrada da cidade   
         self.lb_cidade = Label(self.frame_1, text="Cidade", font=("Arial", 11, "bold"),fg="#1D6E6E", bg="#e6e6e6")
