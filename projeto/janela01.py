@@ -16,23 +16,21 @@ class Funcs():
         self.en_cidade.delete(0, END)        
     def conecta_db(self):
         self.conn = sqlite3.connect("clientes.db")
-        self.cursor = self.conn.cursor()
-
+        self.cursor = self.conn.cursor(); print("Conectado ao banco de dados")
     def desconecta_db(self):
-        self.conn.close()
-    
+        self.conn.close(); print("Desconectado ao banco de dados")  
     def montaTabelas(self):
-        self.conecta_db(); print("Conectado ao banco de dados")
+        self.conecta_db(); 
 
         ### Criando a tabela clientes
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS clientes (
-                codigo INTEGER PRIMARY KEY AUTOINCREMENT,
+                codigo INTEGER PRIMARY KEY,
                 nome CHAR(40) NOT NULL,
-                telefone INTEGER(20) NOT NULL,
-                cep INTEGER(40),
+                telefone TEXT NOT NULL,
+                cep TEXT,
                 endereco CHAR(80),
-                numero INTEGER(20),
+                numero TEXT,
                 bairro CHAR(40),
                 cidade CHAR(40)
             )
@@ -40,7 +38,94 @@ class Funcs():
         self.conn.commit()
         print("Banco de dados criado com sucesso")
         self.desconecta_db()
+    def variaveis(self):
+        self.codigo = self.en_codigo.get()
+        self.nome = self.en_nome.get()
+        self.telefone = self.en_telefone.get()
+        self.cep = self.en_cep.get()
+        self.endereco = self.en_endereco.get()
+        self.numero = self.en_numero.get()
+        self.bairro = self.en_bairro.get()
+        self.cidade = self.en_cidade.get()
+    def add_cliente(self):      # Método para adicionar cliente
+        self.variaveis()
+        self.conecta_db()
+    
+        self.cursor.execute("""
+            INSERT INTO clientes (nome, telefone, cep, endereco, numero, bairro, cidade)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (self.nome, self.telefone, self.cep, self.endereco, self.numero, self.bairro, self.cidade))
+        self.conn.commit()      # Confirma a inserção no banco de dados
+        print("Cliente adicionado com sucesso")
+        self.desconecta_db()
+        self.select_lista()      # Atualiza a lista após adicionar o cliente
+        self.limpa_tela()        # Limpa os campos após adicionar o cliente
+    def OnDoubleClick(self, event):
+        self.limpa_tela()
+        self.listaClientes.selection()
+        for i in self.listaClientes.selection():
+            col1, col2, col3, col4, col5, col6, col7, col8 = self.listaClientes.item(i, "values")
+            self.en_codigo.insert(0, col1)
+            self.en_nome.insert(0, col2)
+            self.en_telefone.insert(0, col3)
+            self.en_cep.insert(0, col4)
+            self.en_endereco.insert(0, col5)
+            self.en_numero.insert(0, col6)
+            self.en_bairro.insert(0, col7)
+            self.en_cidade.insert(0, col8)
+    def deleta_cliente(self):
+        self.variaveis()
+        if self.codigo.strip() == "":
+            print("Informe o código para deletar.")
+            return
+        self.conecta_db()
+        self.cursor.execute(""" DELETE FROM clientes WHERE codigo = ? """, (self.codigo,))
+        self.conn.commit()
+        self.desconecta_db()
+        self.limpa_tela()
+        self.select_lista()
+    def altera_cliente(self):
+        self.variaveis()
+        self.conecta_db()
+        self.cursor.execute("""
+            UPDATE clientes SET nome = ?, telefone = ?, cep = ?, endereco = ?, numero = ?, bairro = ?, cidade = ?
+            WHERE codigo = ?
+        """, (self.nome, self.telefone, self.cep, self.endereco, self.numero, self.bairro, self.cidade, self.codigo))
+        self.conn.commit()
+        print("Cliente alterado com sucesso")
+        self.desconecta_db()
+        self.select_lista()
+        self.limpa_tela()
+    def Menus(self):
+        menubar = Menu(self.root)
+        self.root.config(menu=menubar)
+        filemenu = Menu(menubar, tearoff=0)
+        filemenu2 = Menu(menubar, tearoff=0)
 
+        def Quit(): self.root.destroy()
+
+        menubar.add_cascade(label="Opções", menu=filemenu)
+        menubar.add_cascade(label="Sobre", menu=filemenu2)
+        menubar.add_cascade(label="Sair", command=Quit)
+
+        filemenu.add_command(label="Limpar", command=self.limpa_tela)
+        filemenu.add_command(label="Buscar", command=self.select_lista)
+        filemenu.add_command(label="Novo", command=self.add_cliente)
+        filemenu.add_command(label="Alterar", command=self.altera_cliente)
+        filemenu.add_command(label="Apagar", command=self.deleta_cliente)
+        filemenu2.add_command(label="Sobre", command=lambda: print("Desenvolvido por Ari Júnior"))
+
+
+    def select_lista(self):
+        self.conecta_db()
+        self.listaClientes.delete(*self.listaClientes.get_children())
+        lista = self.cursor.execute("""SELECT codigo, nome, telefone, cep, endereco, numero, bairro, cidade FROM clientes ORDER BY codigo""")
+        for i in lista:     # Percorre a lista de clientes
+            self.listaClientes.insert("", "end", values=i)
+             # Insere cada cliente na lista
+
+        self.desconecta_db()    # Desconecta do banco de dados após a consulta
+        
 
 class Application(Funcs):
     def __init__(self):
@@ -49,14 +134,17 @@ class Application(Funcs):
         self.frame_da_tela()
         self.widgets_frame1()
         self.lista_frame2()
+        self.montaTabelas()
+        self.select_lista()     # Carrega a lista de clientes ao iniciar
+        self.Menus()
         root.mainloop()
         
     def tela(self):
         self.root.title("Cadastro de Clientes")
-        self.root.geometry("700x500")
+        self.root.geometry("900x700")
         self.root.configure(background="#046D8B")
         self.root.resizable(width=True, height=True)
-        self.root.minsize(width=580, height=450)
+        self.root.minsize(width=780, height=650)
         self.root.maxsize(width=1200, height=900)
     
     def frame_da_tela(self):
@@ -79,9 +167,9 @@ class Application(Funcs):
     def widgets_frame1(self):
         self.criar_botao(self.frame_1, "Limpar", 0.19, 0.10, comando=self.limpa_tela)
         self.criar_botao(self.frame_1, "Buscar", 0.35, 0.10)
-        self.criar_botao(self.frame_1, "Novo", 0.51, 0.10)
-        self.criar_botao(self.frame_1, "Alterar", 0.67, 0.10)
-        self.criar_botao(self.frame_1, "Apagar", 0.83, 0.10)
+        self.criar_botao(self.frame_1, "Novo", 0.51, 0.10, comando=self.add_cliente)
+        self.criar_botao(self.frame_1, "Alterar", 0.67, 0.10, comando=self.altera_cliente)
+        self.criar_botao(self.frame_1, "Apagar", 0.83, 0.10, comando=self.deleta_cliente)
 
 
         ## Criando Labels e Entrada do código
@@ -133,23 +221,35 @@ class Application(Funcs):
         self.en_cidade.place(relx=0.70, rely=0.7, relwidth=0.24, relheight=0.11)
 
     def lista_frame2(self):
-        self.listaClientes = ttk.Treeview(self.frame_2, height=3, columns=("col1", "col2", "col3", "col4"))
-        self.listaClientes.heading("#0", text="")
-        self.listaClientes.heading("col1", text="Código")
+        self.listaClientes = ttk.Treeview(self.frame_2, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8"), show= "headings")
+        
+       
+        self.listaClientes.heading("col1", text="Cód")
         self.listaClientes.heading("col2", text="Nome")
         self.listaClientes.heading("col3", text="Telefone")
-        self.listaClientes.heading("col4", text="Cidade")
+        self.listaClientes.heading("col4", text="CEP")
+        self.listaClientes.heading("col5", text="Endereço")
+        self.listaClientes.heading("col6", text="Número")
+        self.listaClientes.heading("col7", text="Bairro")
+        self.listaClientes.heading("col8", text="Cidade")
 
-        self.listaClientes.column("#0", width=1, anchor="center")
-        self.listaClientes.column("col1", width=50, anchor="center")
-        self.listaClientes.column("col2", width=200, anchor="center")
-        self.listaClientes.column("col3", width=100, anchor="center")
-        self.listaClientes.column("col4", width=150, anchor="center")
+    
+        self.listaClientes.column("col1", width=8, anchor="center")
+        self.listaClientes.column("col2", width=150, anchor="w")
+        self.listaClientes.column("col3", width=40, anchor="center")
+        self.listaClientes.column("col4", width=35, anchor="center")
+        self.listaClientes.column("col5", width=100, anchor="center")
+        self.listaClientes.column("col6", width=20, anchor="center")
+        self.listaClientes.column("col7", width=80, anchor="center")
+        self.listaClientes.column("col8", width=70, anchor="center")
+
 
         self.listaClientes.place(relx=0.01, rely=0.01, relwidth=0.95, relheight=0.90)   
         
         self.scrooLista = Scrollbar(self.frame_2, orient="vertical")
         self.listaClientes.configure(yscrollcommand=self.scrooLista.set)
         self.scrooLista.place(relx=0.96, rely=0.01, relwidth=0.04, relheight=0.90)
+
+        self.listaClientes.bind("<Double-1>", self.OnDoubleClick)
 
 Application()
