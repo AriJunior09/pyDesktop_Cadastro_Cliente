@@ -3,6 +3,12 @@
 ## Descrição do Projeto
 Este projeto é um **sistema de cadastro de clientes** desenvolvido em **Python** utilizando a biblioteca **Tkinter** para interface gráfica, **SQLite** como banco de dados local e **ReportLab** para geração de relatórios em PDF. O sistema permite cadastrar, alterar, excluir, buscar clientes e gerar relatórios individuais em PDF.
 
+## Tela
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
 ---
 
 ## Funcionalidades
@@ -28,11 +34,11 @@ Este projeto é um **sistema de cadastro de clientes** desenvolvido em **Python*
 
 ## Estrutura do Projeto
 
-├── main.py     # Arquivo principal com toda a aplicação
+├── main.py     - Arquivo principal com toda a aplicação
 
-├── clientes.db # Banco de dados SQLite (gerado automaticamente)
+├── clientes.db - Banco de dados SQLite (gerado automaticamente)
 
-├── cliente.pdf # Relatório PDF (gerado pelo sistema)
+├── cliente.pdf - Relatório PDF (gerado pelo sistema)
 
 
 ---
