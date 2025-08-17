@@ -1,8 +1,60 @@
 from tkinter import *
 from tkinter import ttk
 import sqlite3
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import SimpleDocTemplate, Image
+import webbrowser
+
+# Configuração da janela principal
 
 root = Tk()
+
+class Relatorios():
+    def printCliente(self):
+        webbrowser.open("cliente.pdf")
+    def geraRelatCliente(self):
+        self.c = canvas.Canvas("cliente.pdf", pagesize=A4)
+
+        self.codigoRel = self.en_codigo.get()
+        self.nomeRel = self.en_nome.get()
+        self.telefoneRel = self.en_telefone.get()
+        self.cepRel = self.en_cep.get()
+        self.enderecoRel = self.en_endereco.get()
+        self.numeroRel = self.en_numero.get()
+        self.bairroRel = self.en_bairro.get()
+        self.cidadeRel = self.en_cidade.get()
+        self.c.setFont("Helvetica", 24)
+        self.c.drawString(200, 800, "Ficha do Cliente")
+
+        self.c.setFont("Helvetica-Bold", 14)
+        self.c.drawString(50, 750, f"Código: ")
+        self.c.drawString(50, 730, f"Nome: ")
+        self.c.drawString(50, 710, f"Telefone: ")
+        self.c.drawString(50, 690, f"CEP: ")
+        self.c.drawString(50, 670, f"Endereço: ")
+        self.c.drawString(50, 650, f"Número: ")
+        self.c.drawString(50, 630, f"Bairro: ")
+        self.c.drawString(50, 610, f"Cidade: ")
+
+        self.c.setFont("Helvetica", 14)
+        self.c.drawString(130, 750, self.codigoRel)
+        self.c.drawString(130, 730, self.nomeRel)
+        self.c.drawString(130, 710, self.telefoneRel)
+        self.c.drawString(130, 690, self.cepRel)
+        self.c.drawString(130, 670, self.enderecoRel)
+        self.c.drawString(130, 650, self.numeroRel)
+        self.c.drawString(130, 630, self.bairroRel)
+        self.c.drawString(130, 610, self.cidadeRel)
+
+        self.c.rect(20, 550, 550, 3, fill=True, stroke=False)
+
+        self.c.showPage()
+        self.c.save()
+        self.printCliente()
+
 
 class Funcs():
     def limpa_tela(self):
@@ -105,10 +157,11 @@ class Funcs():
         def Quit(): self.root.destroy()
 
         menubar.add_cascade(label="Opções", menu=filemenu)
-        menubar.add_cascade(label="Sobre", menu=filemenu2)
+        menubar.add_cascade(label="Relatórios", menu=filemenu2)
         menubar.add_cascade(label="Sair", command=Quit)
 
         filemenu.add_command(label="Limpar", command=self.limpa_tela)
+        filemenu2.add_command(label="Gerar PDF", command=self.geraRelatCliente)
         filemenu.add_command(label="Buscar", command=self.select_lista)
         filemenu.add_command(label="Novo", command=self.add_cliente)
         filemenu.add_command(label="Alterar", command=self.altera_cliente)
@@ -127,7 +180,7 @@ class Funcs():
         self.desconecta_db()    # Desconecta do banco de dados após a consulta
         
 
-class Application(Funcs):
+class Application(Funcs, Relatorios):
     def __init__(self):
         self.root = root
         self.tela()
