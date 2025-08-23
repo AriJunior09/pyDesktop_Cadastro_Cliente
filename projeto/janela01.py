@@ -167,8 +167,6 @@ class Funcs():
         filemenu.add_command(label="Alterar", command=self.altera_cliente)
         filemenu.add_command(label="Apagar", command=self.deleta_cliente)
         filemenu2.add_command(label="Sobre", command=lambda: print("Desenvolvido por Ari Júnior"))
-
-
     def select_lista(self):
         self.conecta_db()
         self.listaClientes.delete(*self.listaClientes.get_children())
@@ -178,7 +176,24 @@ class Funcs():
              # Insere cada cliente na lista
 
         self.desconecta_db()    # Desconecta do banco de dados após a consulta
-        
+    def busca_cliente(self):
+        self.conecta_db()
+        self.listaClientes.delete(*self.listaClientes.get_children())
+        self.en_nome.insert(END, '%')  # Adiciona o caractere curinga '%' para busca parcial
+        nome = self.en_nome.get()
+
+        self.cursor.execute("""SELECT codigo, nome, telefone, cep, endereco, numero, bairro, cidade FROM clientes WHERE nome LIKE '%s' ORDER BY nome ASC""" % nome)              # Consulta com filtro
+
+        lista = self.cursor.fetchall() # Obtém todos os resultados da consulta
+        for i in lista:                  # Percorre a lista de clientes  
+            self.listaClientes.insert("", END, values=i)
+        if not lista:            # Se a lista estiver vazia, exibe mensagem   
+            print("Nenhum cliente encontrado com esse nome.")
+    
+
+        self.limpa_tela()
+
+        self.desconecta_db()
 
 class Application(Funcs, Relatorios):
     def __init__(self):
@@ -190,6 +205,7 @@ class Application(Funcs, Relatorios):
         self.montaTabelas()
         self.select_lista()     # Carrega a lista de clientes ao iniciar
         self.Menus()
+        self.busca_cliente()
         root.mainloop()
         
     def tela(self):
@@ -219,7 +235,7 @@ class Application(Funcs, Relatorios):
 
     def widgets_frame1(self):
         self.criar_botao(self.frame_1, "Limpar", 0.19, 0.10, comando=self.limpa_tela)
-        self.criar_botao(self.frame_1, "Buscar", 0.35, 0.10)
+        self.criar_botao(self.frame_1, "Buscar", 0.35, 0.10, comando=self.busca_cliente)
         self.criar_botao(self.frame_1, "Novo", 0.51, 0.10, comando=self.add_cliente)
         self.criar_botao(self.frame_1, "Alterar", 0.67, 0.10, comando=self.altera_cliente)
         self.criar_botao(self.frame_1, "Apagar", 0.83, 0.10, comando=self.deleta_cliente)
