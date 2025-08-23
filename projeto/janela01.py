@@ -230,12 +230,22 @@ class Application(Funcs, Relatorios):
         font=("verdana", 10, "bold"),
         fg="#FFFFFF",
         bg="#1D6E6E",
+        activebackground="#3FEDED",
+        activeforeground="#2C2C2C",
         command=comando
     ).place(relx=relx, rely=rely, relwidth=0.14, relheight=0.14)
 
     def widgets_frame1(self):
+        self.canvas_bt = Canvas(self.frame_1, bd=0, bg="#464747", highlightbackground='gray', highlightthickness=4)
+        self.canvas_bt.place(relx=0.18, rely=0.08, relwidth=0.8, relheight=0.18)
         self.criar_botao(self.frame_1, "Limpar", 0.19, 0.10, comando=self.limpa_tela)
         self.criar_botao(self.frame_1, "Buscar", 0.35, 0.10, comando=self.busca_cliente)
+
+        """     self.imgNovo = PhotoImage(file = "botaoAzNovo.jpg")
+        self.imgNovo = self.imgNovo.subsample(3, 3)  # Reduz a imagem para 1/3 do tamanho original
+        self.style = ttk.Style()
+        self.style.configure("BW.TButton", realwindth=1, relheight=1, foreground="gray", borderwidth=0, bordercolor="gray", background="#dfe3ee", image=self.imgNovo) """
+
         self.criar_botao(self.frame_1, "Novo", 0.51, 0.10, comando=self.add_cliente)
         self.criar_botao(self.frame_1, "Alterar", 0.67, 0.10, comando=self.altera_cliente)
         self.criar_botao(self.frame_1, "Apagar", 0.83, 0.10, comando=self.deleta_cliente)
